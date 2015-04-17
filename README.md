@@ -9,8 +9,6 @@ new MegaTable({
 ```
 
 Settings:
-* element - DOM Element
-* rows - number
 ```javascript
 {
 	/**
