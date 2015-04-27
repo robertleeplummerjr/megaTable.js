@@ -35,8 +35,7 @@ var MegaTable = (function(document) {
 			colGroup = this.colGroup = document.createElement('colGroup'),
 			tBody = this.tBody = document.createElement('tBody'),
 			defaults = MegaTable.defaultSettings,
-			i,
-			thaw;
+			i;
 
 		this.charSize = charSize();
 
@@ -44,33 +43,15 @@ var MegaTable = (function(document) {
 			if (settings[i] === undefined) settings[i] = defaults[i];
 		}
 
-		this.rows = settings.rows;
-		this.columns = settings.columns;
-		this.updateCorner = settings.updateCorner;
 		this.rowIndex = 0;
 		this.columnIndex = 0;
 
-		if (thaw = this.thaw = settings.thaw) {
-			this.updateCell = function(rowIndex, columnIndex, td) {
-				thaw.add(function() {
-					settings.updateCell(rowIndex, columnIndex, td);
-				});
-			};
-			this.updateRowHeader = function(i, th) {
-				thaw.add(function() {
-					settings.updateRowHeader(i, th);
-				});
-			};
-			this.updateColumnHeader = function(columnIndex, th, col) {
-				thaw.add(function() {
-					settings.updateColumnHeader(columnIndex, th, col);
-				});
-			};
-		} else {
-			this.updateCell = settings.updateCell;
-			this.updateRowHeader = settings.updateRowHeader;
-			this.updateColumnHeader = settings.updateColumnHeader;
-		}
+		this.rows = settings.rows;
+		this.columns = settings.columns;
+		this.updateCorner = settings.updateCorner;
+		this.updateCell = settings.updateCell;
+		this.updateRowHeader = settings.updateRowHeader;
+		this.updateColumnHeader = settings.updateColumnHeader;
 
 		table.appendChild(colGroup);
 		table.appendChild(tBody);
@@ -488,9 +469,7 @@ var MegaTable = (function(document) {
 
 		updateCorner: function(th, col) {
 
-		},
-
-		thaw: null
+		}
 	};
 
 	return MegaTable;

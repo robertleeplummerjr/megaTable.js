@@ -23,8 +23,5 @@
     "bower_components",
     "test",
     "tests"
-  ],
-  "dependencies": {
-    "thaw.js": "~1.2.2"
-  }
+  ]
 }
