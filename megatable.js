@@ -35,7 +35,8 @@ var MegaTable = (function(document) {
 			colGroup = this.colGroup = document.createElement('colGroup'),
 			tBody = this.tBody = document.createElement('tBody'),
 			defaults = MegaTable.defaultSettings,
-			i;
+			i,
+			thaw;
 
 		this.charSize = charSize();
 
@@ -45,11 +46,31 @@ var MegaTable = (function(document) {
 
 		this.rows = settings.rows;
 		this.columns = settings.columns;
-		this.updateCell = settings.updateCell;
-		this.updateRowHeader = settings.updateRowHeader;
-		this.updateColumnHeader = settings.updateColumnHeader;
+		this.updateCorner = settings.updateCorner;
 		this.rowIndex = 0;
 		this.columnIndex = 0;
+
+		if (thaw = this.thaw = settings.thaw) {
+			this.updateCell = function(rowIndex, columnIndex, td) {
+				thaw.add(function() {
+					settings.updateCell(rowIndex, columnIndex, td);
+				});
+			};
+			this.updateRowHeader = function(i, th) {
+				thaw.add(function() {
+					settings.updateRowHeader(i, th);
+				});
+			};
+			this.updateColumnHeader = function(columnIndex, th, col) {
+				thaw.add(function() {
+					settings.updateColumnHeader(columnIndex, th, col);
+				});
+			};
+		} else {
+			this.updateCell = settings.updateCell;
+			this.updateRowHeader = settings.updateRowHeader;
+			this.updateColumnHeader = settings.updateColumnHeader;
+		}
 
 		table.appendChild(colGroup);
 		table.appendChild(tBody);
@@ -152,12 +173,15 @@ var MegaTable = (function(document) {
 
 		//used in instantiation
 		_createCornerDOM: function (tr) {
-			var th = document.createElement('th'),
+			var th = this.cornerTh = document.createElement('th'),
 				col = this.cornerCol = document.createElement('col');
 
 			col.style.width = '14px';
 
 			tr.appendChild(th);
+
+			this.updateCorner(th, col);
+
 			this.colGroup.appendChild(col);
 		},
 
@@ -460,7 +484,13 @@ var MegaTable = (function(document) {
 		 * turns on strict mode so that size comes strictly from col elements
 		 * @type {Boolean}
 		 */
-		strict: false
+		strict: false,
+
+		updateCorner: function(th, col) {
+
+		},
+
+		thaw: null
 	};
 
 	return MegaTable;
