@@ -252,9 +252,10 @@ var MegaTable = (function(document) {
 			while(header.lastChild !== null) {
 				header.removeChild(header.lastChild);
 			}
-			header.removeAttribute('style');
-			header.removeAttribute('class');
-			col.removeAttribute('style');
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
+			if (col.hasAttribute('style')) col.removeAttribute('style');
 
 			this.updateColumnHeader(this.columnIndex, header, col);
 
@@ -274,9 +275,10 @@ var MegaTable = (function(document) {
 			while(header.lastChild !== null) {
 				header.removeChild(header.lastChild);
 			}
-			header.removeAttribute('style');
-			header.removeAttribute('class');
-			col.removeAttribute('style');
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
+			if (col.hasAttribute('style')) col.removeAttribute('style');
 
 			this.updateColumnHeader(this.columnIndex + parent.children.length, header, col);
 
@@ -295,8 +297,9 @@ var MegaTable = (function(document) {
 			while(header.lastChild !== null) {
 				header.removeChild(header.lastChild);
 			}
-			header.removeAttribute('style');
-			header.removeAttribute('class');
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
 
 			this.updateRowHeader(this.rowIndex, header);
 
@@ -312,8 +315,9 @@ var MegaTable = (function(document) {
 			while(header.lastChild !== null) {
 				header.removeChild(header.lastChild);
 			}
-			header.removeAttribute('style');
-			header.removeAttribute('class');
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
 
 			this.updateRowHeader(this.rowIndex + parent.children.length, header);
 
@@ -329,13 +333,14 @@ var MegaTable = (function(document) {
 			for (i = 1; i < max; i++) {
 				element = children[i];
 
-				while(element.lastChild !== null) {
-					element.removeChild(element.lastChild);
+				while(element.firstChild) {
+					element.removeChild(element.firstChild);
 				}
-				element.removeAttribute('style');
-				element.removeAttribute('colSpan');
-				element.removeAttribute('rowSpan');
-				element.removeAttribute('class');
+
+				if (element.hasAttribute('style')) element.removeAttribute('style');
+				if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+				if (element.hasAttribute('class')) element.className = '';
 
 				this.updateCell(this.rowIndex, this.columnIndex + i - 1, element);
 			}
@@ -352,13 +357,14 @@ var MegaTable = (function(document) {
 			for (i = 1; i < max; i++) {
 				element = children[i];
 
-				while(element.lastChild !== null) {
-					element.removeChild(element.lastChild);
+				while(element.firstChild) {
+					element.removeChild(element.firstChild);
 				}
-				element.removeAttribute('style');
-				element.removeAttribute('colSpan');
-				element.removeAttribute('rowSpan');
-				element.removeAttribute('class');
+
+				if (element.hasAttribute('style')) element.removeAttribute('style');
+				if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+				if (element.hasAttribute('class')) element.className = '';
 
 				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + i - 1, element);
 			}
@@ -370,21 +376,26 @@ var MegaTable = (function(document) {
 			var rows = this.tBody.children,
 				max = rows.length,
 				row,
-				tdElement,
+				element,
 				i;
 
 			for (i = 1; i < max; i++) {
 				row = rows[i];
-				tdElement = row.lastChild;
-				row.removeChild(tdElement);
+				element = row.lastChild;
+				row.removeChild(element);
 
-				while(tdElement.lastChild !== null) {
-					tdElement.removeChild(tdElement.lastChild);
+				while(element.firstChild) {
+					element.removeChild(element.firstChild);
 				}
 
-				this.updateCell(this.rowIndex + i - 1, this.columnIndex, tdElement);
+				if (element.hasAttribute('style')) element.removeAttribute('style');
+				if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+				if (element.hasAttribute('class')) element.className = '';
 
-				row.insertBefore(tdElement, row.children[1]);
+				this.updateCell(this.rowIndex + i - 1, this.columnIndex, element);
+
+				row.insertBefore(element, row.children[1]);
 			}
 		},
 
@@ -393,21 +404,26 @@ var MegaTable = (function(document) {
 				max = rows.length - 1,
 				row,
 				columnIndexEnd = this.columnIndex + rows[0].children.length,
-				tdElement,
+				element,
 				i;
 
 			for (i = 1; i < max; i++) {
 				row = rows[i];
-				tdElement = row.children[1];
-				row.removeChild(tdElement);
+				element = row.children[1];
+				row.removeChild(element);
 
-				while(tdElement.lastChild !== null) {
-					tdElement.removeChild(tdElement.lastChild);
+				while(element.firstChild) {
+					element.removeChild(element.firstChild);
 				}
 
-				this.updateCell(this.rowIndex + i - 1, columnIndexEnd, tdElement);
+				if (element.hasAttribute('style')) element.removeAttribute('style');
+				if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+				if (element.hasAttribute('class')) element.className = '';
 
-				row.insertBefore(tdElement, null);
+				this.updateCell(this.rowIndex + i - 1, columnIndexEnd, element);
+
+				row.insertBefore(element, null);
 			}
 		}
 	};
