@@ -191,8 +191,8 @@ var MegaTable = (function(document) {
 
 		_createRowHeaderDOM: function (tr, i) {
 			var th = document.createElement('th');
-			this.updateRowHeader(i, th);
 			tr.appendChild(th);
+			this.updateRowHeader(i, th);
 		},
 
 		_createMegaTableDOM: function () {
