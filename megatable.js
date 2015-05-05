@@ -320,7 +320,7 @@ var MegaTable = (function(document) {
 			if (col.hasAttribute('style')) col.removeAttribute('style');
 			if (col.hasAttribute('class')) col.className = '';
 
-			this.updateColumnHeader(this.columnIndex, header, col);
+			this.updateColumnHeader(this.columnIndex, header, col, MegaTable.left);
 
 			//insert after corner
 			parent.insertBefore(header, parent.children[this._columnStartIndex]);
@@ -380,7 +380,7 @@ var MegaTable = (function(document) {
 			if (col.hasAttribute('style')) col.removeAttribute('style');
 			if (col.hasAttribute('class')) col.className = '';
 
-			this.updateColumnHeader(this.columnIndex + parent.children.length, header, col);
+			this.updateColumnHeader(this.columnIndex + parent.children.length, header, col, MegaTable.right);
 
 			//insert at end
 			parent.appendChild(header);
@@ -403,7 +403,7 @@ var MegaTable = (function(document) {
 			if (header.hasAttribute('style')) header.removeAttribute('style');
 			if (header.hasAttribute('class')) header.className = '';
 
-			this.updateRowHeader(this.rowIndex, header);
+			this.updateRowHeader(this.rowIndex, header, MegaTable.up);
 
 			return header.parentNode;
 		},
@@ -445,7 +445,7 @@ var MegaTable = (function(document) {
 			if (header.hasAttribute('style')) header.removeAttribute('style');
 			if (header.hasAttribute('class')) header.className = '';
 
-			this.updateRowHeader(this.rowIndex + parent.children.length, header);
+			this.updateRowHeader(this.rowIndex + parent.children.length, header, MegaTable.down);
 
 			return header.parentNode;
 		},
@@ -468,7 +468,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex, this.columnIndex + i - 1, element);
+				this.updateCell(this.rowIndex, this.columnIndex + i - 1, element, MegaTable.up);
 			}
 
 			this.tBody.insertBefore(row, this.tBody.children[this._rowStartIndex]);
@@ -526,7 +526,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + i - 1, element);
+				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + i - 1, element, MegaTable.down);
 			}
 
 			this.tBody.insertBefore(row, null);
@@ -555,7 +555,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + i - 1, this.columnIndex, element);
+				this.updateCell(this.rowIndex + i - 1, this.columnIndex, element, MegaTable.left);
 
 				row.insertBefore(element, row.children[this._columnStartIndex]);
 			}
@@ -618,7 +618,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + i - 1, columnIndexEnd, element);
+				this.updateCell(this.rowIndex + i - 1, columnIndexEnd, element, MegaTable.right);
 
 				row.insertBefore(element, null);
 			}
@@ -703,16 +703,18 @@ var MegaTable = (function(document) {
 		 * @param {Number} row
 		 * @param {Number} column
 		 * @param {HTMLTableCellElement} td
+		 * @param {Number} direction
 		 */
-		updateCell: function(row, column, td) {},
+		updateCell: function(row, column, td, direction) {},
 
 		/**
 		 * callback for when a table row header element needs updated
 		 * @type {Function}
 		 * @param {Number} i
 		 * @param {HTMLTableCellElement} th
+		 * @param {Number} direction
 		 */
-		updateRowHeader: function(i, th) {},
+		updateRowHeader: function(i, th, direction) {},
 
 		/**
 		 * callback for when a table column header element needs updated
@@ -720,9 +722,15 @@ var MegaTable = (function(document) {
 		 * @param {Number} i
 		 * @param {HTMLTableCellElement} th
 		 * @param {HTMLTableColElement} col
+		 * @param {Number} direction
 		 */
-		updateColumnHeader: function(i, th, col) {}
+		updateColumnHeader: function(i, th, col, direction) {}
 	};
+
+	MegaTable.left = 0;
+	MegaTable.right = 1;
+	MegaTable.up = 2;
+	MegaTable.down = 3;
 
 	return MegaTable;
 })(document);
