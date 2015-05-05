@@ -116,8 +116,18 @@ var MegaTable = (function(document) {
 
 			if (this.rowIndex > rowIndex) {
 				up = this.rowIndex - rowIndex;
+
+				if (up > this.rows) {
+					up -= this.rows;
+					this.rowIndex = rowIndex + up;
+				}
 			} else if (this.rowIndex < rowIndex) {
 				down = rowIndex - this.rowIndex;
+
+				if (down > this.rows) {
+					down -= this.rows;
+					this.rowIndex = rowIndex - down;
+				}
 			}
 
 			if (up > 0) {
@@ -153,8 +163,18 @@ var MegaTable = (function(document) {
 
 			if (this.columnIndex > columnIndex) {
 				left = this.columnIndex - columnIndex;
+
+				if (left > this.columns) {
+					left -= this.columns;
+					this.columnIndex = columnIndex + left;
+				}
 			} else if (this.columnIndex < columnIndex) {
 				right = columnIndex - this.columnIndex;
+
+				if (right > this.columns) {
+					right -= this.columns;
+					this.columnIndex = columnIndex - right;
+				}
 			}
 
 			if (left > 0) {
