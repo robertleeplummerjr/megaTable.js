@@ -22,6 +22,9 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
-  ]
+    "test"
+  ],
+  "devDependencies": {
+    "testify.js": "master"
+  }
 }

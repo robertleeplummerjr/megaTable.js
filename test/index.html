@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>({{pass}}|{{fail}}) {{title}} · Testify Suite</title>
+    <meta charset="utf-8" />
+    <script src="../megatable.js"></script>
+    <script src="../bower_components/testify.js/Testify.js"></script>
+    <script src="../bower_components/vue/dist/vue.js"></script>
+    <script src="insertion.js"></script>
+</head>
+<body></body>
+<script>
+    tf.run();
+    document.body.innerHTML = Testify.report.html.ui;
+    Testify.report.html(tf);
+</script>
+</html>
