@@ -46,8 +46,8 @@ var MegaTable = (function(document) {
 		this.rowIndex = 0;
 		this.columnIndex = 0;
 
-        this.rowInsertionIndex = 1;
-        this.columnInsertionIndex = 1;
+        this.trInsertionIndex = 0;
+        this.thInsertionIndex = 0;
 
 		this.rows = settings.rows;
 		this.columns = settings.columns;
@@ -71,23 +71,26 @@ var MegaTable = (function(document) {
 			settings.element.appendChild(table);
 		}
 
+        this.rowHeaders = 1;
+        this.columnHeaders = 1;
+
         this.initiated = true;
 	}
 
 	MegaTable.prototype = {
         /**
          *
-         * @param {Number} rowIndex
+         * @param {Number} trIndex
          * @returns {MegaTable}
          */
-		setRowStartIndex: function(rowIndex) {
-			if (rowIndex < 1) {
-				rowIndex = 1;
-			} else if (rowIndex > this.rows) {
-				rowIndex = this.rows;
+		setRowStartIndex: function(trIndex) {
+			if (trIndex < 0) {
+                trIndex = 0;
+			} else if (trIndex > this.rows) {
+                trIndex = this.rows;
 			}
 
-			this.rowInsertionIndex = rowIndex;
+			this.trInsertionIndex = trIndex;
 
 			return this;
 		},
@@ -97,13 +100,13 @@ var MegaTable = (function(document) {
          * @returns {MegaTable}
          */
 		setColumnStartIndex: function(columnIndex) {
-			if (columnIndex < 1) {
-				columnIndex = 1;
+			if (columnIndex < 0) {
+				columnIndex = 0;
 			} else if (columnIndex > this.columns) {
 				columnIndex = this.columns;
 			}
 
-			this.columnInsertionIndex = columnIndex;
+			this.thInsertionIndex = columnIndex;
 
 			return this;
 		},
@@ -225,44 +228,55 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} rowIndex
+         * @param {Number} trIndex
          * @returns {MegaTable}
          */
-		newRowAt: function(rowIndex) {
-            rowIndex++;
-			var row = this._moveBottomRowHeaderToIndex(rowIndex);
+		newRow: function(trIndex) {
+			var row = this._moveBottomRowHeaderToIndex(trIndex);
 			return this
-				._moveBottomRowToIndex(row, rowIndex)
-				._updateRowHeadersFollowing(rowIndex)
-                ._updateRowCellsFollowing(rowIndex);
+				._moveBottomRowToIndex(row, trIndex)
+				._updateRowHeadersFollowing(trIndex)
+                ._updateRowCellsFollowing(trIndex);
 		},
 
         /**
          *
-         * @param {Number} columnIndex
+         * @param {Number} thIndex
          * @returns {MegaTable}
          */
-		newColumnAt: function(columnIndex) {
-            columnIndex++;
+		newColumn: function(thIndex) {
 			return this
-				._moveRightColumnHeaderToIndex(columnIndex)
-				._moveRightColumnToIndex(columnIndex)
-				._updateColumnHeadersFollowing(columnIndex)
-                ._updateColumnCellsFollowing(columnIndex);
+				._moveRightColumnHeaderToIndex(thIndex)
+				._moveRightColumnToIndex(thIndex)
+				._updateColumnHeadersFollowing(thIndex)
+                ._updateColumnCellsFollowing(thIndex);
 		},
+
+        removeRow: function(rowIndex) {
+            var row = this._moveIndexRowHeaderToBottom(rowIndex);
+            return this
+                ._moveIndexRowToBottom(row)
+                ._updateRowHeadersFollowing(this.rows)
+                ._updateRowCellsFollowing(this.rows);
+        },
+        removeColumn: function(thIndex) {
+            return this
+                ._moveIndexColumnHeaderToRight(thIndex)
+                ._moveIndexColumnToRight(thIndex);
+        },
         /**
          *
-         * @param {Number} [rowIndex]
+         * @param {Number} [trIndex]
          * @returns {MegaTable}
          */
-        forceRedrawRows: function(rowIndex) {
-            rowIndex = rowIndex || 0;
+        forceRedrawRows: function(trIndex) {
+            trIndex = trIndex || 0;
 
             this.table.style.visibility = 'hidden';
 
             this
-                ._updateRowHeadersFollowing(rowIndex)
-                ._updateRowCellsFollowing(rowIndex);
+                ._updateRowHeadersFollowing(trIndex)
+                ._updateRowCellsFollowing(trIndex);
 
             this.table.style.visibility = '';
 
@@ -271,17 +285,17 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} [columnIndex]
+         * @param {Number} [thIndex]
          * @returns {MegaTable}
          */
-        forceRedrawColumns: function (columnIndex) {
-            columnIndex = columnIndex || 0;
+        forceRedrawColumns: function (thIndex) {
+            thIndex = thIndex || 0;
 
             this.table.style.visibility = 'hidden';
 
             this
-                ._updateColumnHeadersFollowing(columnIndex)
-                ._updateColumnCellsFollowing(columnIndex);
+                ._updateColumnHeadersFollowing(thIndex)
+                ._updateColumnCellsFollowing(thIndex);
 
             this.table.style.visibility = '';
 
@@ -448,28 +462,28 @@ var MegaTable = (function(document) {
 			this.updateColumnHeader(this.columnIndex, header, col, MegaTable.left);
 
 			//insert after corner
-			parent.insertBefore(header, parent.children[this.columnInsertionIndex]);
-			colGroup.insertBefore(col, colGroup.children[this.columnInsertionIndex]);
+			parent.insertBefore(header, parent.children[this.thInsertionIndex + this.rowHeaders]);
+			colGroup.insertBefore(col, colGroup.children[this.thInsertionIndex + this.rowHeaders]);
 
 			return this;
 		},
 
         /**
          *
-         * @param columnIndex
+         * @param thIndex
          * @returns {MegaTable}
          * @private
          */
-		_moveRightColumnHeaderToIndex: function(columnIndex) {
+		_moveRightColumnHeaderToIndex: function(thIndex) {
 			var parent = this.tBody.children[0],
 				colGroup = this.colGroup,
 				col = colGroup.lastChild,
 				header = parent.lastChild;
 
-			if (columnIndex < this.columnInsertionIndex) {
-				columnIndex = this.columnInsertionIndex;
-			} else if (columnIndex > this.columns) {
-				columnIndex = this.columns;
+			if (thIndex < this.thInsertionIndex) {
+                thIndex = this.thInsertionIndex;
+			} else if (thIndex > this.columns) {
+                thIndex = this.columns;
 			}
 
 			parent.removeChild(header);
@@ -485,11 +499,49 @@ var MegaTable = (function(document) {
 			if (col.hasAttribute('style')) col.removeAttribute('style');
 			if (col.hasAttribute('class')) col.className = '';
 
-			this.updateColumnHeader(this.columnIndex + columnIndex, header, col);
+			this.updateColumnHeader(this.columnIndex + thIndex, header, col);
 
 			//insert before corner
-			parent.insertBefore(header, parent.children[columnIndex]);
-			colGroup.insertBefore(col, colGroup.children[columnIndex]);
+			parent.insertBefore(header, parent.children[thIndex + this.rowHeaders]);
+			colGroup.insertBefore(col, colGroup.children[thIndex + this.rowHeaders]);
+
+			return this;
+		},
+
+        /**
+         *
+         * @param thIndex
+         * @returns {MegaTable}
+         * @private
+         */
+        _moveIndexColumnHeaderToRight: function(thIndex) {
+            if (thIndex > this.columns) {
+                thIndex = this.columns;
+            }
+
+            var parent = this.tBody.children[0],
+				colGroup = this.colGroup,
+				col = colGroup.children[thIndex + this.rowHeaders],
+				header = parent.children[thIndex + this.rowHeaders];
+
+			parent.removeChild(header);
+			colGroup.removeChild(col);
+
+			while(header.lastChild !== null) {
+				header.removeChild(header.lastChild);
+			}
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
+
+			if (col.hasAttribute('style')) col.removeAttribute('style');
+			if (col.hasAttribute('class')) col.className = '';
+
+			this.updateColumnHeader(this.columnIndex + this.columns, header, col);
+
+			//insert before corner
+			parent.appendChild(header);
+			colGroup.appendChild(col);
 
 			return this;
 		},
@@ -502,8 +554,8 @@ var MegaTable = (function(document) {
 		_moveLeftColumnHeaderToRight: function() {
 			var parent = this.tBody.children[0],
 				colGroup = this.colGroup,
-				col = colGroup.children[this.columnInsertionIndex],
-				header = parent.children[this.columnInsertionIndex];
+				col = colGroup.children[this.thInsertionIndex + this.rowHeaders],
+				header = parent.children[this.thInsertionIndex + this.rowHeaders];
 
 			parent.removeChild(header);
 			colGroup.removeChild(col);
@@ -553,22 +605,23 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} rowIndex
+         * @param {Number} trIndex
          * @returns {Node}
          * @private
          */
-		_moveBottomRowHeaderToIndex: function(rowIndex) {
+		_moveBottomRowHeaderToIndex: function(trIndex) {
 			var parent = this.tBody,
-				header = parent.lastChild.children[0];
+                row = parent.lastChild,
+				header = row.children[0];
 
-			if (rowIndex < this.rowInsertionIndex) {
-				rowIndex = this.rowInsertionIndex;
-			} else if (rowIndex > this.rows) {
-				rowIndex = this.rows;
+			if (trIndex < this.trInsertionIndex) {
+                trIndex = this.trInsertionIndex;
+			} else if (trIndex > this.rows) {
+                trIndex = this.rows;
 			}
 
 			//we intentionally leave the node detached here because the body manages it
-			parent.removeChild(header.parentNode);
+			parent.removeChild(row);
 
 			while(header.lastChild !== null) {
 				header.removeChild(header.lastChild);
@@ -577,9 +630,39 @@ var MegaTable = (function(document) {
 			if (header.hasAttribute('style')) header.removeAttribute('style');
 			if (header.hasAttribute('class')) header.className = '';
 
-			this.updateRowHeader(this.rowIndex + rowIndex, header);
+			this.updateRowHeader(this.rowIndex + trIndex, header);
 
-			return header.parentNode;
+			return row;
+		},
+
+        /**
+         *
+         * @param {Number} rowIndex
+         * @returns {Node|HTMLTableRowElement}
+         * @private
+         */
+        _moveIndexRowHeaderToBottom: function(rowIndex) {
+            if (rowIndex > this.rows) {
+                rowIndex = this.rows;
+            }
+
+            var parent = this.tBody,
+                row = parent.children[rowIndex],
+				header = row.children[0];
+
+			//we intentionally leave the node detached here because the body manages it
+			parent.removeChild(row);
+
+			while(header.lastChild !== null) {
+				header.removeChild(header.lastChild);
+			}
+
+			if (header.hasAttribute('style')) header.removeAttribute('style');
+			if (header.hasAttribute('class')) header.className = '';
+
+			this.updateRowHeader(this.rowIndex + this.rows, header);
+
+			return row;
 		},
 
         /**
@@ -589,7 +672,7 @@ var MegaTable = (function(document) {
          */
 		_moveTopRowHeaderToBottom: function() {
 			var parent = this.tBody,
-				header = parent.children[this.rowInsertionIndex].children[0];
+				header = parent.children[this.trInsertionIndex + this.columnHeaders].children[0];
 
 			//we intentionally leave the node detached here because the body manages it
 			parent.removeChild(header.parentNode);
@@ -615,7 +698,7 @@ var MegaTable = (function(document) {
 		_moveBottomRowToTop: function (row) {
 			var children = row.children,
 				element,
-				columnIndex = this.columnInsertionIndex;
+				columnIndex = this.thInsertionIndex;
 
 			for (; columnIndex < this.columns; columnIndex++) {
 				element = children[columnIndex];
@@ -629,34 +712,34 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex, this.columnIndex + columnIndex - 1, element, MegaTable.up);
+				this.updateCell(this.rowIndex, this.columnIndex + columnIndex, element, MegaTable.up);
 			}
 
-			this.tBody.insertBefore(row, this.tBody.children[this.rowInsertionIndex]);
+			this.tBody.insertBefore(row, this.tBody.children[this.trInsertionIndex + this.columnHeaders]);
 
 			return this;
 		},
 
         /**
          *
-         * @param {HTMLTableRowElement} row
-         * @param {Number} rowIndex
+         * @param {Node|HTMLTableRowElement} tr
+         * @param {Number} trIndex
          * @returns {MegaTable}
          * @private
          */
-		_moveBottomRowToIndex: function (row, rowIndex) {
-			var children = row.children,
+		_moveBottomRowToIndex: function (tr, trIndex) {
+			var children = tr.children,
 				element,
-				columnIndex = this.columnInsertionIndex;
+				columnIndex = this.thInsertionIndex;
 
-			if (rowIndex < this.rowInsertionIndex) {
-				rowIndex = this.rowInsertionIndex;
-			} else if (rowIndex > this.rows) {
-				rowIndex = this.rows;
+			if (trIndex < this.trInsertionIndex) {
+                trIndex = this.trInsertionIndex;
+			} else if (trIndex > this.rows) {
+                trIndex = this.rows;
 			}
 
-			for (; columnIndex <= this.columns; columnIndex++) {
-				element = children[columnIndex];
+			for (; columnIndex < this.columns; columnIndex++) {
+				element = children[columnIndex + this.columnHeaders];
 
 				while(element.firstChild !== null) {
 					element.removeChild(element.firstChild);
@@ -667,13 +750,44 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + rowIndex, this.columnIndex + columnIndex - 1, element);
+				this.updateCell(this.rowIndex + trIndex, this.columnIndex + columnIndex, element);
 			}
 
-			this.tBody.insertBefore(row, this.tBody.children[rowIndex]);
+			this.tBody.insertBefore(tr, this.tBody.children[trIndex + this.columnHeaders]);
 
 			return this;
 		},
+
+        /**
+         *
+         * @param {HTMLTableRowElement} row
+         * @returns {MegaTable}
+         * @private
+         */
+        _moveIndexRowToBottom: function (row) {
+            var children = row.children,
+                element,
+                columnIndex = this.thInsertionIndex;
+
+            for (; columnIndex < this.columns; columnIndex++) {
+                element = children[columnIndex + this.columnHeaders];
+
+                while(element.firstChild !== null) {
+                    element.removeChild(element.firstChild);
+                }
+
+                if (element.hasAttribute('style')) element.removeAttribute('style');
+                if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+                if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+                if (element.hasAttribute('class')) element.className = '';
+
+                this.updateCell(this.rowIndex + this.rows, this.columnIndex + columnIndex, element);
+            }
+
+            this.tBody.appendChild(row);
+
+            return this;
+        },
 
         /**
          *
@@ -684,10 +798,10 @@ var MegaTable = (function(document) {
 		_moveTopRowToBottom: function (row) {
 			var children = row.children,
 				element,
-				columnIndex = this.columnInsertionIndex;
+				columnIndex = this.thInsertionIndex;
 
-			for (; columnIndex <= this.columns; columnIndex++) {
-				element = children[columnIndex];
+			for (; columnIndex < this.columns; columnIndex++) {
+				element = children[columnIndex + this.columnHeaders];
 
 				while(element.firstChild !== null) {
 					element.removeChild(element.firstChild);
@@ -698,7 +812,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + columnIndex - 1, element, MegaTable.down);
+				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + columnIndex, element, MegaTable.down);
 			}
 
 			this.tBody.insertBefore(row, null);
@@ -715,10 +829,10 @@ var MegaTable = (function(document) {
 			var rows = this.tBody.children,
 				row,
 				element,
-				rowIndex = this.rowInsertionIndex;
+				rowIndex = this.trInsertionIndex;
 
 			for (; rowIndex < this.rows; rowIndex++) {
-				row = rows[rowIndex];
+				row = rows[rowIndex + this.rowHeaders];
 				element = row.lastChild;
 				row.removeChild(element);
 
@@ -731,9 +845,9 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + rowIndex - 1, this.columnIndex, element, MegaTable.left);
+				this.updateCell(this.rowIndex + rowIndex, this.columnIndex, element, MegaTable.left);
 
-				row.insertBefore(element, row.children[this.rowInsertionIndex]);
+				row.insertBefore(element, row.children[this.trInsertionIndex + this.rowHeaders]);
 			}
 
 			return this;
@@ -741,22 +855,22 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} columnIndex
+         * @param {Number} thIndex
          * @returns {MegaTable}
          * @private
          */
-		_moveRightColumnToIndex: function (columnIndex) {
+		_moveRightColumnToIndex: function (thIndex) {
 			var rows = this.tBody.children,
 				row,
 				element,
-				rowIndex = this.rowInsertionIndex;
+				rowIndex = this.trInsertionIndex;
 
-			if (columnIndex < this.columnInsertionIndex) {
-				columnIndex = this.columnInsertionIndex;
+			if (thIndex < this.thInsertionIndex) {
+                thIndex = this.thInsertionIndex;
 			}
 
-			for (; rowIndex <= this.rows; rowIndex++) {
-				row = rows[rowIndex];
+			for (; rowIndex < this.rows; rowIndex++) {
+				row = rows[rowIndex + this.rowHeaders];
 				element = row.lastChild;
 				row.removeChild(element);
 
@@ -769,9 +883,47 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + rowIndex - 1, this.columnIndex + columnIndex, element);
+				this.updateCell(this.rowIndex + rowIndex, this.columnIndex + thIndex, element);
 
-				row.insertBefore(element, row.children[columnIndex]);
+				row.insertBefore(element, row.children[thIndex + this.rowHeaders]);
+			}
+
+			return this;
+		},
+
+        /**
+         *
+         * @param {Number} thIndex
+         * @returns {MegaTable}
+         * @private
+         */
+        _moveIndexColumnToRight: function (thIndex) {
+            if (thIndex < this.columns) {
+                thIndex = this.columns;
+            }
+
+            var rows = this.tBody.children,
+				row,
+				element,
+				rowIndex = this.trInsertionIndex;
+
+			for (; rowIndex < this.rows; rowIndex++) {
+				row = rows[rowIndex + this.rowHeaders];
+				element = row.children[thIndex];
+				row.removeChild(element);
+
+				while(element.firstChild !== null) {
+					element.removeChild(element.firstChild);
+				}
+
+				if (element.hasAttribute('style')) element.removeAttribute('style');
+				if (element.hasAttribute('colSpan')) element.removeAttribute('colSpan');
+				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
+				if (element.hasAttribute('class')) element.className = '';
+
+				this.updateCell(this.rowIndex + rowIndex, this.columnIndex + this.columns, element);
+
+				row.insertBefore(element, row.children[thIndex + this.rowHeaders]);
 			}
 
 			return this;
@@ -787,11 +939,11 @@ var MegaTable = (function(document) {
 				row,
 				columnIndexEnd = this.columns,
 				element,
-				rowIndex = this.rowInsertionIndex;
+				rowIndex = this.trInsertionIndex;
 
 			for (; rowIndex < this.rows; rowIndex++) {
-				row = rows[rowIndex];
-				element = row.children[this.columnInsertionIndex];
+				row = rows[rowIndex + this.rowHeaders];
+				element = row.children[this.thInsertionIndex + this.rowHeaders];
 				row.removeChild(element);
 
 				while(element.firstChild !== null) {
@@ -803,9 +955,9 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + rowIndex - 1, columnIndexEnd, element, MegaTable.right);
+				this.updateCell(this.rowIndex + rowIndex, columnIndexEnd, element, MegaTable.right);
 
-				row.insertBefore(element, null);
+				row.appendChild(element);
 			}
 
 			return this;
@@ -813,21 +965,19 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} rowIndex
+         * @param {Number} trIndex
          * @returns {MegaTable}
          * @private
          */
-		_updateRowHeadersFollowing: function(rowIndex) {
+		_updateRowHeadersFollowing: function(trIndex) {
 			var rows = this.tBody.children,
 				header;
 
-            rowIndex++;
-
-			for(;rowIndex <= this.rows;rowIndex++) {
-				header = rows[rowIndex].children[0];
+			for(;trIndex < this.rows;trIndex++) {
+				header = rows[trIndex + this.columnHeaders].children[0];
 				if (header.hasAttribute('style')) header.removeAttribute('style');
 				if (header.hasAttribute('class')) header.className = '';
-				this.updateRowHeader(this.rowIndex + rowIndex, header);
+				this.updateRowHeader(this.rowIndex + trIndex, header);
 			}
 
 			return this;
@@ -835,29 +985,27 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} columnIndex
+         * @param {Number} thIndex
          * @returns {MegaTable}
          * @private
          */
-		_updateColumnHeadersFollowing: function(columnIndex) {
+		_updateColumnHeadersFollowing: function(thIndex) {
 			var headers = this.tBody.children[0].children,
 				colGroup = this.colGroup,
 				cols = colGroup.children,
 				header,
 				col;
 
-            columnIndex++;
-
-			for(;columnIndex <= this.columns;columnIndex++) {
-				header = headers[columnIndex];
-				col = cols[columnIndex];
+			for(;thIndex < this.columns;thIndex++) {
+				header = headers[thIndex + this.rowHeaders];
+				col = cols[thIndex + this.rowHeaders];
 				if (header.hasAttribute('style')) header.removeAttribute('style');
 				if (header.hasAttribute('class')) header.className = '';
 
 				if (col.hasAttribute('style')) col.removeAttribute('style');
 				if (col.hasAttribute('class')) col.className = '';
 
-				this.updateColumnHeader(this.columnIndex + columnIndex, header, col);
+				this.updateColumnHeader(this.columnIndex + thIndex, header, col);
 			}
 
 			return this;
@@ -865,27 +1013,27 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} rowIndex
+         * @param {Number} trIndex
          * @returns {MegaTable}
          * @private
          */
-        _updateRowCellsFollowing: function(rowIndex) {
+        _updateRowCellsFollowing: function(trIndex) {
             var rows = this.tBody.children,
                 columnIndex,
                 element,
                 row;
 
-            if (rowIndex < this.rowInsertionIndex) {
-                rowIndex = this.rowInsertionIndex;
-            } else if (rowIndex > this.rows) {
-                rowIndex = this.rows;
+            if (trIndex < this.trInsertionIndex) {
+                trIndex = this.trInsertionIndex;
+            } else if (trIndex > this.rows) {
+                trIndex = this.rows;
             }
 
-            for (;rowIndex <= this.rows; rowIndex++) {
-                row = rows[rowIndex];
-                columnIndex = this.columnInsertionIndex;
-                for (; columnIndex <= this.columns; columnIndex++) {
-                    element = row.children[columnIndex];
+            for (;trIndex < this.rows; trIndex++) {
+                row = rows[trIndex + this.columnHeaders];
+                columnIndex = this.thInsertionIndex;
+                for (; columnIndex < this.columns; columnIndex++) {
+                    element = row.children[columnIndex + this.columnHeaders];
 
                     while (element.firstChild !== null) {
                         element.removeChild(element.firstChild);
@@ -896,7 +1044,7 @@ var MegaTable = (function(document) {
                     if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
                     if (element.hasAttribute('class')) element.className = '';
 
-                    this.updateCell(this.rowIndex + rowIndex, this.columnIndex + columnIndex - 1, element);
+                    this.updateCell(this.rowIndex + trIndex, this.columnIndex + columnIndex, element);
                 }
             }
 
@@ -905,28 +1053,28 @@ var MegaTable = (function(document) {
 
         /**
          *
-         * @param {Number} columnIndex
+         * @param {Number} thIndex
          * @returns {MegaTable}
          * @private
          */
-        _updateColumnCellsFollowing: function(columnIndex) {
+        _updateColumnCellsFollowing: function(thIndex) {
             var rows = this.tBody.children,
                 rowIndex,
                 element,
                 row;
 
-            if (columnIndex < this.columnInsertionIndex) {
-                columnIndex = this.columnInsertionIndex;
-            } else if (columnIndex > this.columns) {
-                columnIndex = this.columns;
+            if (thIndex < this.thInsertionIndex) {
+                thIndex = this.thInsertionIndex;
+            } else if (thIndex > this.columns) {
+                thIndex = this.columns;
             }
 
-            for (; columnIndex <= this.columns; columnIndex++) {
-                rowIndex = this.rowInsertionIndex;
-                for (;rowIndex <= this.rows; rowIndex++) {
-                    row = rows[rowIndex];
+            for (; thIndex < this.columns; thIndex++) {
+                rowIndex = this.trInsertionIndex;
+                for (;rowIndex < this.rows; rowIndex++) {
+                    row = rows[rowIndex + this.rowHeaders];
 
-                    element = row.children[columnIndex];
+                    element = row.children[thIndex + this.rowHeaders];
 
                     while (element.firstChild !== null) {
                         element.removeChild(element.firstChild);
@@ -937,7 +1085,7 @@ var MegaTable = (function(document) {
                     if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
                     if (element.hasAttribute('class')) element.className = '';
 
-                    this.updateCell(this.rowIndex + rowIndex, this.columnIndex + columnIndex - 1, element);
+                    this.updateCell(this.rowIndex + rowIndex, this.columnIndex + thIndex, element);
                 }
             }
 
@@ -1003,7 +1151,10 @@ var MegaTable = (function(document) {
 		 * @param {HTMLTableColElement} col
 		 * @param {Number} direction
 		 */
-		updateColumnHeader: function(i, th, col, direction) {}
+		updateColumnHeader: function(i, th, col, direction) {},
+
+        useRowHeaders: true,
+        useColumnHeaders: true
 	};
 
 	MegaTable.left = 0;
