@@ -233,7 +233,8 @@ var MegaTable = (function(document) {
 			var row = this._moveBottomRowHeaderToIndex(rowIndex);
 			return this
 				._moveBottomRowToIndex(row, rowIndex)
-				._updateRowHeadersFollowing(rowIndex);
+				._updateRowHeadersFollowing(rowIndex)
+                ._updateRowCellsFollowing(rowIndex);
 		},
 
         /**
@@ -246,7 +247,8 @@ var MegaTable = (function(document) {
 			return this
 				._moveRightColumnHeaderToIndex(columnIndex)
 				._moveRightColumnToIndex(columnIndex)
-				._updateColumnHeadersFollowing(columnIndex);
+				._updateColumnHeadersFollowing(columnIndex)
+                ._updateColumnCellsFollowing(columnIndex);
 		},
         /**
          *

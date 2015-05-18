@@ -254,3 +254,30 @@ tf.test('column insertion @ 2', function(tf) {
         tf.assertEquals(tBody.children[i].children[3].textContent, 'inserted', "left column has been inserted correctly");
     }
 });
+
+tf.test('row insertion @ 0 after scrolling 5 down', function(tf) {
+    var el = document.createElement('div'),
+        mt = new MegaTable({
+            element: el,
+            rows: 5,
+            columns: 5,
+            updateCell: function(r, c, td) {
+                if (this.initiated) {
+                    td.innerHTML = 'inserted' + r + c;
+                }
+            },
+            updateRowHeader: function(r, th) {
+                th.innerHTML = r + '';
+            },
+            updateColumnHeader: function(c, th, col) {
+                th.innerHTML = c + '';
+            }
+        }),
+        tBody = mt.tBody;
+
+    tf.assertEquals(el.textContent, '', 'Table is empty');
+    mt.updateRows(5);
+    mt.newRowAt(0);
+    tf.assertEquals(tBody.children[1].textContent, 'insertedinsertedinsertedinsertedinserted', "top row has been inserted correctly");
+    console.log(el.innerHTML);
+});
