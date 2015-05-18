@@ -701,7 +701,7 @@ var MegaTable = (function(document) {
 				columnIndex = this.thInsertionIndex;
 
 			for (; columnIndex < this.columns; columnIndex++) {
-				element = children[columnIndex];
+				element = children[columnIndex + this.columnHeaders];
 
 				while(element.firstChild !== null) {
 					element.removeChild(element.firstChild);
