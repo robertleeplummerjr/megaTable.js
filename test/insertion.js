@@ -267,10 +267,14 @@ tf.test('row insertion @ 0 after scrolling 5 down', function(tf) {
                 }
             },
             updateRowHeader: function(r, th) {
-                th.innerHTML = r + '';
+                if (this.initiated) {
+                    th.innerHTML = r + '';
+                }
             },
             updateColumnHeader: function(c, th, col) {
-                th.innerHTML = c + '';
+                if (this.initiated) {
+                    th.innerHTML = c + '';
+                }
             }
         }),
         tBody = mt.tBody;
@@ -278,6 +282,5 @@ tf.test('row insertion @ 0 after scrolling 5 down', function(tf) {
     tf.assertEquals(el.textContent, '', 'Table is empty');
     mt.updateRows(5);
     mt.newRowAt(0);
-    tf.assertEquals(tBody.children[1].textContent, 'insertedinsertedinsertedinsertedinserted', "top row has been inserted correctly");
-    console.log(el.innerHTML);
+    tf.assertEquals(tBody.children[1].textContent, '6inserted60inserted61inserted62inserted63inserted64', "top row has been inserted correctly");
 });
