@@ -975,6 +975,11 @@ var MegaTable = (function(document) {
 
 			for(;trIndex < this.rows;trIndex++) {
 				header = rows[trIndex + this.columnHeaders].children[0];
+
+                while(header.firstChild !== null) {
+                    header.removeChild(header.firstChild);
+                }
+
 				if (header.hasAttribute('style')) header.removeAttribute('style');
 				if (header.hasAttribute('class')) header.className = '';
 				this.updateRowHeader(this.rowIndex + trIndex, header);
@@ -999,6 +1004,11 @@ var MegaTable = (function(document) {
 			for(;thIndex < this.columns;thIndex++) {
 				header = headers[thIndex + this.rowHeaders];
 				col = cols[thIndex + this.rowHeaders];
+
+                while(header.firstChild !== null) {
+                    header.removeChild(header.firstChild);
+                }
+
 				if (header.hasAttribute('style')) header.removeAttribute('style');
 				if (header.hasAttribute('class')) header.className = '';
 
