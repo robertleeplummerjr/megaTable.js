@@ -570,7 +570,7 @@ var MegaTable = (function(document) {
 			if (col.hasAttribute('style')) col.removeAttribute('style');
 			if (col.hasAttribute('class')) col.className = '';
 
-			this.updateColumnHeader(this.columnIndex + parent.children.length, header, col, MegaTable.right);
+			this.updateColumnHeader(this.columnIndex + parent.children.length - 1, header, col, MegaTable.right);
 
 			//insert at end
 			parent.appendChild(header);
@@ -684,7 +684,7 @@ var MegaTable = (function(document) {
 			if (header.hasAttribute('style')) header.removeAttribute('style');
 			if (header.hasAttribute('class')) header.className = '';
 
-			this.updateRowHeader(this.rowIndex + parent.children.length, header, MegaTable.down);
+			this.updateRowHeader(this.rowIndex + parent.children.length - 1, header, MegaTable.down);
 
 			return header.parentNode;
 		},
@@ -812,7 +812,7 @@ var MegaTable = (function(document) {
 				if (element.hasAttribute('rowSpan')) element.removeAttribute('rowSpan');
 				if (element.hasAttribute('class')) element.className = '';
 
-				this.updateCell(this.rowIndex + this.tBody.children.length, this.columnIndex + columnIndex, element, MegaTable.down);
+				this.updateCell(this.rowIndex + this.tBody.children.length - 1, this.columnIndex + columnIndex, element, MegaTable.down);
 			}
 
 			this.tBody.insertBefore(row, null);
