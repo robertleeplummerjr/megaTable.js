@@ -65,7 +65,9 @@ var MegaTable = (function(document) {
 		}
 		table.className = 'mega-table';
 
-		this._createMegaTableDOM();
+		this
+			._createMegaTableDOM()
+			._updateCorner();
 
 		if (settings.element !== null) {
 			settings.element.appendChild(table);
