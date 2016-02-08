@@ -3,9 +3,9 @@ displaying infinite sized tables with fixed number of dom elements
 
 ## Why?
 Simple:
-** The browser cannot handle a huge number of elements
-** Tables are one of the most resource intensive elements for general layout
-** Need
+* The browser cannot handle a huge number of elements
+* Tables are one of the most resource intensive elements for general layout
+* Need
 I found myself working on projects for some big companies who would throw money at a simple
 problem that apparently couldn't be solved: table size would limit what the browser could do.
 They needed big reports, but interfaces, tons of data.  Any sort of ui component that would trigger redraw
