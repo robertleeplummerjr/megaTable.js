@@ -9,7 +9,7 @@ Simple:
 
 I found myself working on projects for some big companies who would throw money at a simple
 problem that apparently couldn't be solved: table size would limit what the browser could do.
-They needed big reports, but interfaces, tons of data.  Any sort of ui component that would trigger redraw
+They needed big reports, bit interfaces, tons of data.  Any sort of ui component that would trigger redraw/repaint
 would cause the browser to fall flat on it's face for the end user.  This peaked when I was working on
 a spreadsheet interface for a bank who calculated loan projections in a huge spreadsheet.
 
