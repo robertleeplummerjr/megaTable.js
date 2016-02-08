@@ -253,6 +253,11 @@ var MegaTable = (function(document) {
         ._updateColumnCellsFollowing(thIndex);
     },
 
+    /**
+     *
+     * @param {Number} rowIndex
+     * @returns {MegaTable}
+     */
     removeRow: function(rowIndex) {
       var row = this._moveIndexRowHeaderToBottom(rowIndex);
       return this
@@ -260,6 +265,12 @@ var MegaTable = (function(document) {
         ._updateRowHeadersFollowing(this.rows)
         ._updateRowCellsFollowing(this.rows);
     },
+
+    /**
+     *
+     * @param {Number} thIndex
+     * @returns {*|MegaTable}
+     */
     removeColumn: function(thIndex) {
       return this
         ._moveIndexColumnHeaderToRight(thIndex)
@@ -305,7 +316,7 @@ var MegaTable = (function(document) {
 
     /**
      *
-     * @param i
+     * @param {Number} i
      * @returns {HTMLElement}
      */
     col: function(i) {

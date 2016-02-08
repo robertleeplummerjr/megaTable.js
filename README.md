@@ -1,14 +1,14 @@
 # megaTable.js
 displaying infinite sized tables with fixed number of dom elements
 
-Usage:
+## Usage:
 ```javascript
 new MegaTable({
 	element: document.getElementById('myElement')
 });
 ```
 
-Settings:
+## Settings:
 ```javascript
 {
 	/**
@@ -61,4 +61,20 @@ Settings:
 	 */
 	strict: false
 }
+```
+
+## Methods
+```
+setRowStartIndex(Number trIndex) -> MegaTable
+setColumnStartIndex(Number columnIndex) -> MegaTable
+update(Number rowIndex, Number columnIndex) -> MegaTable
+updateRows(Number rowIndex) -> MegaTable
+updateColumns(Number columnIndex) -> MegaTable
+newRow(Number trIndex) -> MegaTable
+newColumn(Number thIndex) -> MegaTable
+removeRow(Number rowIndex) -> MegaTable
+removeColumn(Number thIndex) -> MegaTable
+forceRedrawRows(Number trIndex) -> MegaTable
+forceRedrawColumns(Number thIndex) -> MegaTable
+col(Number i) -> HTMLElement
 ```
